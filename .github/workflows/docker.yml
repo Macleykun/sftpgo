@@ -78,6 +78,7 @@ jobs:
             FEATURES="${FEATURES},unixcrypt"
           fi
           DOCKER_IMAGES=("macley/sftpgo" "ghcr.io/macley/sftpgo")
+          DOCKER_IMAGES=("macley/sftpgo")
           TAGS="${DOCKER_IMAGES[0]}:${VERSION}"
           TAGS_SLIM="${DOCKER_IMAGES[0]}:${VERSION_SLIM}"
 
@@ -155,13 +156,13 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
         if: ${{ github.event_name != 'pull_request' }}
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-        if: ${{ github.event_name != 'pull_request' }}
+#      - name: Login to GitHub Container Registry
+#        uses: docker/login-action@v3
+#        with:
+#          registry: ghcr.io
+#          username: ${{ github.repository_owner }}
+#          password: ${{ secrets.GITHUB_TOKEN }}
+#        if: ${{ github.event_name != 'pull_request' }}
 
       - name: Build and push
         uses: docker/build-push-action@v5
