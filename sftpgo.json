@@ -104,6 +104,7 @@
       "sha1sum",
       "sha256sum",
       "cd",
+      "uname",
       "pwd",
       "scp"
     ],
