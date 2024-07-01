@@ -187,6 +187,7 @@ var (
 	ErrDuplicatedKey = errors.New("duplicated key not allowed")
 	// ErrForeignKeyViolated occurs when there is a foreign key constraint violation
 	ErrForeignKeyViolated   = errors.New("violates foreign key constraint")
+	tz                      = ""
 	isAdminCreated          atomic.Bool
 	validTLSUsernames       = []string{string(sdk.TLSUsernameNone), string(sdk.TLSUsernameCN)}
 	config                  Config
@@ -590,6 +591,16 @@ func (c *Config) doBackup() (string, error) {
 	return outputFile, nil
 }
 
+// SetTZ sets the configured timezone.
+func SetTZ(val string) {
+	tz = val
+}
+
+// UseLocalTime returns true if local time should be used instead of UTC.
+func UseLocalTime() bool {
+	return tz == "local"
+}
+
 // ExecuteBackup executes a backup
 func ExecuteBackup() (string, error) {
 	return config.doBackup()
@@ -929,12 +940,13 @@ func checkDatabase(checkAdmins bool) error {
 	if config.UpdateMode == 0 {
 		err := provider.initializeDatabase()
 		if err != nil && err != ErrNoInitRequired {
-			logger.WarnToConsole("Unable to initialize data provider: %v", err)
-			providerLog(logger.LevelError, "Unable to initialize data provider: %v", err)
+			logger.WarnToConsole("unable to initialize data provider: %v", err)
+			providerLog(logger.LevelError, "unable to initialize data provider: %v", err)
 			return err
 		}
 		if err == nil {
-			logger.DebugToConsole("Data provider successfully initialized")
+			logger.DebugToConsole("data provider successfully initialized")
+			providerLog(logger.LevelInfo, "data provider successfully initialized")
 		}
 		err = provider.migrateDatabase()
 		if err != nil && err != ErrNoInitRequired {
